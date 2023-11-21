@@ -1,0 +1,91 @@
+[
+    {
+        "host": "XX.XX.XX.2",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX11//live",
+	    "file_name": "EJDATA.LOG"
+    },
+	{
+        "host": "XX.XX.XX.10",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX21//live",
+	    "file_name": "EJDATA.LOG"
+    },
+	{
+        "host": "XX.XX.XX.18",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX31//live",
+	    "file_name": "EJDATA.LOG"
+    },
+	{
+        "host": "XX.XX.XX.42",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX61//live",
+        "file_name": "EJDATA.LOG"
+    },
+	{
+        "host": "XX.XX.XX.82",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX42//live",
+	    "file_name": "EJDATA.LOG"
+    },
+    {
+        "host": "XX.XX.XX.26",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX41//live",
+        "file_name": "EJDATA.LOG"
+    },
+    {
+        "host": "XX.XX.XX.58",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX81//live",
+	    "file_name": "EJDATA.LOG"
+    },
+    {
+        "host": "XX.XX.XX.34",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX51//live",
+	    "file_name": "EJDATA.LOG"
+    },
+    {
+        "host": "XX.XX.XX.74",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXX01//live",
+	    "file_name": "EJDATA.LOG"
+    },
+	{
+        "host": "XX.XX.XX.90",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXX11//live",
+	    "file_name": "EJDATA.LOG"
+    },
+    {
+        "host": "XX.XX.XX.66",
+        "username": "loginuser",
+        "password": "loginpassword",
+        "remote_path": "/Program Files/NCR APTRA/Advance NDC/Data/",
+        "local_path": "//mnt//atms_live//XXXXXX91//live",
+	    "file_name": "EJDATA.LOG"
+    }
+
+]

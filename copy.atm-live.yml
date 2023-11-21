@@ -1,0 +1,24 @@
+---
+- name: ATM 5min DATA COPY TO XXXXX
+  hosts: all
+  become: false
+
+  gather_facts: false
+  vars:
+    source: \\XXXXX\XXXXX\ATM_Live5M\
+    destination: C:\XXXXX\ATM-JOURNAL
+    ansible_become: true
+    ansible_become_method: runas
+    ansible_become_user: XXXXXX
+    ansible_become_password: XXXXX
+    ansible_become_flags: logon_type=new_credentials logon_flags=netcredentials_only
+
+  tasks:
+
+
+    - name: Copy New files
+      ansible.windows.win_copy:
+        checksum: yes
+        remote_src: true
+        src: "{{ source }}"
+        dest: "{{ destination }}"

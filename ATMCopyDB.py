@@ -57,7 +57,7 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
             conn.commit()
 
             # Εκτέλεση του Ansible playbook
-            playbook_command = f"ansible-playbook -l {PlayBookHost} -i /root/ansible/inventory /root/tasks/ATM_TASKS/copy.kivsrv-atm-live.yml"
+            playbook_command = f"ansible-playbook -l {PlayBookHost} -i /root/ansible/inventory /root/tasks/ATM_TASKS/copy.atm-live.yml"
             result = subprocess.run(playbook_command, shell=True, capture_output=True)
 
             # Ανάκτηση των προτύπων ok=1 και changed=1 με χρήση re
@@ -84,7 +84,7 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
         message += f"\nDate and time of sender: {datetime.now()}"
     return latest_file
 
-with open('remote_hosts5M.json') as json_file:
+with open('remote_hostsF.json') as json_file:
     remote_hosts = json.load(json_file)
 
 # Σύνδεση με τη βάση δεδομένων SQLite
