@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Προβολή Δεδομένων σε Πραγματικό Χρόνο</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        .updated-row {
+            background-color: #c3e6cb; /* Χρώμα φόντου Bootstrap για επιτυχημένες ενημερώσεις */
+        }
+        .expired-row {
+            background-color: #f8d7da; /* Χρώμα φόντου Bootstrap για ληγμένες ενημερώσεις */
+        }
+        .current-row {
+            background-color: #ffeeba; /* Χρώμα φόντου Bootstrap για τρέχουσες ενημερώσεις */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Πραγματικός Χρόνος Ενημερώσεις Δεδομένων</h1>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Χρόνος</th>
+                    <th>Host</th>
+                    <th>Όνομα Αρχείου</th>
+                    <th>NextCopy</th>
+                </tr>
+            </thead>
+            <tbody id="data-table"></tbody>
+        </table>
+        <nav aria-label="Πλοήγηση σελίδας">
+            <ul class="pagination" id="pagination"></ul>
+        </nav>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        // Load cached data from localStorage on page load
+        var cachedData = JSON.parse(localStorage.getItem('cachedData')) || [];
+
+        // Function to update the displayed data
+        function updateData(msg) {
+            var dataTable = document.getElementById('data-table');
+            var pagination = document.getElementById('pagination');
+
+            // Merge new data with cached data
+            var newData = msg.data.map(function (row) {
+                row.updated = true;  // Mark as updated
+                return row;
+            });
+
+            // Combine and sort the data based on the 'time' field (assuming 'time' is a timestamp)
+            var combinedData = cachedData.concat(newData);
+            combinedData.sort((a, b) => b.time - a.time);
+
+            // Save the combined data to localStorage
+            localStorage.setItem('cachedData', JSON.stringify(combinedData));
+
+            // Trim the data to keep only the latest entries
+            var maxEntries = 100;
+            combinedData = combinedData.slice(0, maxEntries);
+
+            // Number of items per page
+            var itemsPerPage = 10;
+
+            // Calculate number of pages
+            var totalPages = Math.ceil(combinedData.length / itemsPerPage);
+
+            // Create pagination links
+            pagination.innerHTML = '';
+            for (var i = 1; i <= totalPages; i++) {
+                var li = document.createElement('li');
+                li.className = 'page-item';
+                var a = document.createElement('a');
+                a.className = 'page-link';
+                a.href = '#';
+                a.innerText = i;
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+
+            // Display the first page initially
+            displayData(1);
+
+            // Add click event listeners to pagination links
+            pagination.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (e.target.tagName === 'A') {
+                    var pageNumber = parseInt(e.target.innerText, 10);
+                    displayData(pageNumber);
+                }
+            });
+
+            function displayData(pageNumber) {
+                // Calculate start and end indices for the current page
+                var startIndex = (pageNumber - 1) * itemsPerPage;
+                var endIndex = pageNumber * itemsPerPage;
+
+                // Display data for the current page
+                dataTable.innerHTML = '';  // Clear previous data
+                combinedData.slice(startIndex, endIndex).forEach(function (row) {
+                    var tableRow = document.createElement('tr');
+                    for (var key in row) {
+                        var tableData = document.createElement('td');
+                        tableData.appendChild(document.createTextNode(row[key]));
+
+                        // Check if the cell corresponds to the 'NextCopy' column
+                        if (key === 'NextCopy') {
+                            // Compare 'NextCopy' timestamp with the server's current timestamp
+                            var currentTimestamp = new Date().getTime();
+                            var nextCopyTimestamp = new Date(row[key]).getTime();
+
+                            // Apply background color based on 'NextCopy' timestamp
+                            if (nextCopyTimestamp < currentTimestamp) {
+                                tableData.style.backgroundColor = '#c3e6cb'; // Green background
+                            } else if (nextCopyTimestamp > currentTimestamp) {
+                                tableData.style.backgroundColor = '#f8d7da'; // Red background
+                            } else {
+                                tableData.style.backgroundColor = '#ffeeba'; // Yellow background for current timestamp
+                            }
+                        }
+
+                        tableRow.appendChild(tableData);
+                    }
+                    dataTable.appendChild(tableRow);
+
+                    // Check if the row has been updated
+                    if (row.updated) {
+                        tableRow.classList.add('updated-row');
+                    }
+                });
+
+                // Remove 'active' class from previous active pagination link
+                var activeLink = pagination.querySelector('.page-item.active');
+                if (activeLink) {
+                    activeLink.classList.remove('active');
+                }
+
+                // Add 'active' class to the current pagination link
+                var currentPageLink = pagination.querySelector(`.page-item:nth-child(${pageNumber})`);
+                if (currentPageLink) {
+                    currentPageLink.classList.add('active');
+                }
+            }
+        }
+
+        // Event handler for socket data
+        socket.on('update_data', updateData);
+
+        // Initial data display on page load
+        updateData({data: cachedData});
+    </script>
+</body>
+</html>
