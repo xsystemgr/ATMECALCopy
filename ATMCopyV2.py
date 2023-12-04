@@ -6,17 +6,15 @@ import time
 import subprocess
 import sys
 
-# Έλεγχος αν παρέχονται τα απαραίτητα ορίσματα
 if len(sys.argv) < 5:
     print("Usage: python3 AtmCopy.py inventory atm-copy.yml windowsb1XX atmhosts.json 5")
     sys.exit(1)
 
-# Λήψη των ορισμάτων από τη γραμμή εντολών
 AnsibleInventory = sys.argv[1]
 PlayBookRUN = sys.argv[2]
 GroupHostRUN = sys.argv[3]
 remote_host_json = sys.argv[4]
-sleep_minutes = int(sys.argv[4])
+sleep_minutes = int(sys.argv[5])
 
 
 def get_most_recent_file(sftp, remote_path, file_name):
