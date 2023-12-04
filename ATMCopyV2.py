@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 if len(sys.argv) < 5:
-    print("Usage: python3 AtmCopy.py inventory atm-copy.yml windowsb1XX atmhosts.json 5")
+    print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5")
     sys.exit(1)
 
 AnsibleInventory = sys.argv[1]
@@ -48,8 +48,6 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
             sftp.get(latest_file, local_file)
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             print(f"Successfully copied {latest_file} to {local_file} at {timestamp}")
-
-            # Εκτέλεση του Ansible playbook
             playbook_command = f"ansible-playbook -l {GroupHostRUN} -i {AnsibleInventory} {PlayBookRUN}"
             subprocess.run(playbook_command, shell=True)
 
@@ -69,7 +67,6 @@ while True:
         latest_file = sftp_remote_files(host_info["host"], host_info["username"], host_info["password"],
                                         host_info["remote_path"], host_info["local_path"], host_info["file_name"])
 
-    # Υπολογισμός ώρας έναρξης και ολοκλήρωσης για το επόμενο αντίγραφο
     next_start_time = datetime.now() + timedelta(minutes=sleep_minutes)
     next_end_time = next_start_time + timedelta(minutes=sleep_minutes)
     print(f"\nNext copy will start at: {next_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
