@@ -6,8 +6,9 @@ import time
 import subprocess
 import sys
 
-if len(sys.argv) < 5:
+if len(sys.argv) < 6:
     print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5")
+    print("If use switch --offansible the playbook not run")
     sys.exit(1)
 
 AnsibleInventory = sys.argv[1]
@@ -15,7 +16,7 @@ PlayBookRUN = sys.argv[2]
 GroupHostRUN = sys.argv[3]
 remote_host_json = sys.argv[4]
 sleep_minutes = int(sys.argv[5])
-
+off_ansible = "--offansible" in sys.argv
 
 def get_most_recent_file(sftp, remote_path, file_name):
     files = sftp.listdir(remote_path)
@@ -42,7 +43,7 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
     sftp = ssh.open_sftp()
     latest_file = get_most_recent_file(sftp, remote_path, file_name)
 
-    if latest_file:
+    if latest_file and not off_ansible:
         local_file = os.path.join(local_path, file_name)
         try:
             sftp.get(latest_file, local_file)
