@@ -1,4 +1,5 @@
 import os
+import shutil
 import paramiko
 from datetime import datetime, timedelta
 import json
@@ -19,7 +20,7 @@ def load_ascii_art(file_path):
         return None
 
 if len(sys.argv) < 6:
-    print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5 [--decodep6]")
+    print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5 [--offansible] [--decodep6]")
     sys.exit(1)
 
 AnsibleInventory = sys.argv[1]
@@ -30,6 +31,7 @@ sleep_minutes = int(sys.argv[5])
 off_ansible = "--offansible" in sys.argv
 decode_p6 = "--decodep6" in sys.argv
 ascii_art_file_path = "ascii_art.txt"
+decode_arc_pass = "XAXAXAXA"
 ascii_art = load_ascii_art(ascii_art_file_path)
 
 def get_most_recent_file(sftp, remote_path, file_name):
@@ -71,6 +73,10 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
 
     local_file = os.path.join(local_path, file_name)
     win_local_file = local_file.replace('//', '/')
+    win_local_file_txt = win_local_file.replace('.arc', '.txt')
+    win_local_dir = os.path.dirname(win_local_file)
+    win_local_dir_decode = os.path.join(win_local_dir, '')
+
     try:
         sftp.get(latest_file, local_file)
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -81,14 +87,17 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
             subprocess.run(playbook_command, shell=True)
 
         if decode_p6:
-            decode_command = f"wine Arc.exe e -pXXXXXX {win_local_file}  {win_local_file} -y"
+            decode_command = f"wine Arc.exe e -p{decode_arc_pass} {win_local_file} -o+  -y"
             subprocess.run(decode_command, shell=True)
-            time.sleep(5)
-           # os.remove(local_file)
-           # print(f"Decoded {local_file} using Arc.exe and deleted {file_name}")
+            print(f"Decoding from  {win_local_file} to {win_local_dir_decode}")
+            time.sleep(3)
+            shutil.move("p6info.txt",win_local_dir_decode)
+            #os.remove(local_file)
+
+            #print(f"Decoded {local_file} using Arc.exe and deleted {file_name}")
 
     except IOError as e:
-        print(f"Failed to copy {latest_file}: {e}")
+       print(f"Failed to copy {latest_file}: {e}")
 
     sftp.close()
     ssh.close()
