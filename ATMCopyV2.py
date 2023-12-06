@@ -23,6 +23,7 @@ if len(sys.argv) < 7:
     print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5 arcpassword  [--offansible] [--decodep6]")
     sys.exit(1)
 
+
 AnsibleInventory = sys.argv[1]
 PlayBookRUN = sys.argv[2]
 GroupHostRUN = sys.argv[3]
