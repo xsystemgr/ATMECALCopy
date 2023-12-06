@@ -19,8 +19,8 @@ def load_ascii_art(file_path):
         print(f"Error loading ASCII art from '{file_path}': {e}")
         return None
 
-if len(sys.argv) < 6:
-    print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5 [--offansible] [--decodep6]")
+if len(sys.argv) < 7:
+    print("Usage: python3 AtmCopy.py inventoryfile playbook.yml inventoryhost sftphosts.json 5 arcpassword  [--offansible] [--decodep6]")
     sys.exit(1)
 
 AnsibleInventory = sys.argv[1]
@@ -31,7 +31,7 @@ sleep_minutes = int(sys.argv[5])
 off_ansible = "--offansible" in sys.argv
 decode_p6 = "--decodep6" in sys.argv
 ascii_art_file_path = "ascii_art.txt"
-decode_arc_pass = "XAXAXAXA"
+decode_arc_pass = sys.argv[6]
 ascii_art = load_ascii_art(ascii_art_file_path)
 
 def get_most_recent_file(sftp, remote_path, file_name):
@@ -90,12 +90,14 @@ def sftp_remote_files(host, username, password, remote_path, local_path, file_na
             decode_command = f"wine Arc.exe e -p{decode_arc_pass} {win_local_file} -o+  -y"
             subprocess.run(decode_command, shell=True)
             print(f"Decoding from  {win_local_file} to {win_local_dir_decode}")
-            time.sleep(3)
+            time.sleep(5)
+            if os.path.exists(win_local_file_txt):
+               print("p6 decoded file detected and deleted !")
+               os.remove(win_local_file_txt)
             shutil.move("p6info.txt",win_local_dir_decode)
+            print("______________________________________________________________________________________________________________________________________________________________________________________")
             #os.remove(local_file)
-
             #print(f"Decoded {local_file} using Arc.exe and deleted {file_name}")
-
     except IOError as e:
        print(f"Failed to copy {latest_file}: {e}")
 
@@ -121,6 +123,5 @@ while True:
     next_start_time = datetime.now() + timedelta(minutes=sleep_minutes)
     next_end_time = next_start_time + timedelta(minutes=sleep_minutes)
     print(f"\nNext copy will start at: {next_start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"\nExpected completion time: {next_end_time.strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Waiting for {sleep_minutes} minutes before the next iteration...")
     time.sleep(sleep_minutes * 60)
